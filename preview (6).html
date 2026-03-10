@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FMAT-005 Dried Flower Packaging Record</title>
+<style>
+  body{
+    font-family: Arial, sans-serif;
+    background:#f3f4f6;
+    margin:0;
+    padding:24px;
+    color:#222;
+  }
+  .container{
+    max-width:1500px;
+    margin:auto;
+    background:#fff;
+    border-radius:10px;
+    box-shadow:0 4px 18px rgba(0,0,0,.08);
+    padding:28px;
+  }
+  h1,h2,h3{
+    margin:0 0 12px 0;
+  }
+  h1{
+    text-align:center;
+    margin-bottom:24px;
+  }
+  h2{
+    margin-top:30px;
+    border-bottom:2px solid #d1d5db;
+    padding-bottom:8px;
+  }
+  .muted{
+    color:#555;
+    font-size:14px;
+    text-align:center;
+    margin-bottom:10px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:16px;
+  }
+  .grid-3{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:16px;
+  }
+  .grid-2{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:16px;
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+  }
+  label{
+    font-weight:700;
+    font-size:14px;
+    margin-bottom:6px;
+  }
+  input, select, textarea{
+    padding:9px 10px;
+    border:1px solid #cfd4dc;
+    border-radius:6px;
+    font-size:14px;
+    width:100%;
+    box-sizing:border-box;
+  }
+  textarea{
+    min-height:80px;
+    resize:vertical;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:12px;
+    font-size:14px;
+  }
+  th, td{
+    border:1px solid #d1d5db;
+    padding:8px;
+    vertical-align:top;
+    text-align:left;
+  }
+  th{
+    background:#eef2f7;
+  }
+  .btn{
+    background:#1f6f43;
+    color:#fff;
+    border:none;
+    padding:10px 16px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:700;
+    margin-top:10px;
+  }
+  .btn:hover{
+    background:#185634;
+  }
+  .summary{
+    background:#f9fafb;
+    border:1px solid #d1d5db;
+    padding:16px;
+    border-radius:8px;
+    margin-top:12px;
+  }
+  .note{
+    background:#f8fafc;
+    border-left:4px solid #94a3b8;
+    padding:10px 12px;
+    margin:10px 0 14px 0;
+    font-size:14px;
+  }
+  .small{
+    font-size:12px;
+    color:#555;
+  }
+  .center{
+    text-align:center;
+  }
+  @media (max-width: 1100px){
+    .grid, .grid-3, .grid-2{
+      grid-template-columns:1fr 1fr;
+    }
+  }
+  @media (max-width: 700px){
+    .grid, .grid-3, .grid-2{
+      grid-template-columns:1fr;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>FMAT-005 Dried Flower Packaging Record</h1>
+  <div class="muted">
+    Packaging flow: pre-operational check → input bags / containers → daily inventory and packaging calculation → packaging material → weight verification and seal integrity → post operation → completion and review
+  </div>
+
+  <h2>1. Product Information</h2>
+  <div class="grid">
+    <div class="field">
+      <label>Document #</label>
+      <input value="FMAT005">
+    </div>
+    <div class="field">
+      <label>Date Effective</label>
+      <input type="date" value="2026-03-15">
+    </div>
+    <div class="field">
+      <label>Version</label>
+      <input value="1">
+    </div>
+    <div class="field">
+      <label>Activity Start Date (YYYY-MM-DD)</label>
+      <input type="date">
+    </div>
+
+    <div class="field">
+      <label>Labelled Packaged Date</label>
+      <input type="date">
+    </div>
+    <div class="field">
+      <label>Activity End Date</label>
+      <input type="date">
+    </div>
+    <div class="field">
+      <label>Cultivar (Strain)</label>
+      <input>
+    </div>
+    <div class="field">
+      <label>Final Product Lot #</label>
+      <input>
+    </div>
+
+    <div class="field">
+      <label>Cannabis Net Weight per Unit (B2) grams per unit</label>
+      <input type="number" id="unitSize" step="0.01" value="3.5" oninput="recalcInventory()">
+    </div>
+    <div class="field">
+      <label>Original (Source) Lot</label>
+      <input>
+    </div>
+    <div class="field">
+      <label>Same as Finished Product Lot</label>
+      <select>
+        <option>No</option>
+        <option>Yes</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Performed By</label>
+      <input>
+    </div>
+  </div>
+
+  <h2>2. Preoperational Sanitation Check</h2>
+  <div class="note">
+    Complete before packaging starts. Room must be clean, clear from previous activities, and equipment must be suitable for use.
+  </div>
+
+  <h3>2.1 General</h3>
+  <table>
+    <tr>
+      <th>Check</th>
+      <th>Pass</th>
+      <th>Fail</th>
+      <th>Date</th>
+      <th>Initials / Comments</th>
+    </tr>
+    <tr>
+      <td>Employees follow gowning and hygienic practices</td>
+      <td><input type="checkbox"></td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>No broken glass and/or plastics and/or wood</td>
+      <td><input type="checkbox"></td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>No cannabis debris from previous activities (different batches)</td>
+      <td><input type="checkbox"></td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>All working surfaces and scales are sanitized with ISO 70% and wiped dry</td>
+      <td><input type="checkbox"></td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>No sign of damage / deformity. If any, report before processing</td>
+      <td><input type="checkbox"></td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>Correct packaging materials, labels, and components available for this lot</td>
+      <td><input type="checkbox"></td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+  </table>
+
+  <h3>2.2 Scale Check</h3>
+  <div class="note">
+    Scale reading must be within 5% tolerance of the weight standard.
+  </div>
+  <table>
+    <tr>
+      <th>Scale #</th>
+      <th>Weight Standard</th>
+      <th>Scale Reading</th>
+      <th>Within 5% Tolerance</th>
+      <th>Date</th>
+      <th>Initials</th>
+    </tr>
+    <tr>
+      <td><input></td>
+      <td><input type="number" step="0.01"></td>
+      <td><input type="number" step="0.01"></td>
+      <td>
+        <select><option>Yes</option><option>No</option></select>
+      </td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td><input></td>
+      <td><input type="number" step="0.01"></td>
+      <td><input type="number" step="0.01"></td>
+      <td>
+        <select><option>Yes</option><option>No</option></select>
+      </td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td><input></td>
+      <td><input type="number" step="0.01"></td>
+      <td><input type="number" step="0.01"></td>
+      <td>
+        <select><option>Yes</option><option>No</option></select>
+      </td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+  </table>
+
+  <h3>2.3 ATP Swab</h3>
+  <table>
+    <tr>
+      <th>Swab</th>
+      <th>Reading RLU</th>
+      <th>Status</th>
+      <th>Date</th>
+      <th>Initials</th>
+    </tr>
+    <tr>
+      <td>Swab 1</td>
+      <td><input type="number"></td>
+      <td>
+        <select>
+          <option>Pass (&lt;20 RLU)</option>
+          <option>Caution (20-39 RLU)</option>
+          <option>Fail (&gt;40 RLU)</option>
+          <option>NA</option>
+        </select>
+      </td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>Swab 2</td>
+      <td><input type="number"></td>
+      <td>
+        <select>
+          <option>Pass (&lt;20 RLU)</option>
+          <option>Caution (20-39 RLU)</option>
+          <option>Fail (&gt;40 RLU)</option>
+          <option>NA</option>
+        </select>
+      </td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+  </table>
+
+  <h3>2.4 Room Conditions</h3>
+  <div class="grid-2">
+    <div class="field">
+      <label>Room Temperature °C</label>
+      <input type="number" step="0.1">
+    </div>
+    <div class="field">
+      <label>Room Humidity %</label>
+      <input type="number" step="0.1">
+    </div>
+  </div>
+
+  <h2>3. Daily Input Bag / Container Number and Quantity (g)</h2>
+  <div class="note">
+    Record each bag / container used during packaging.
+  </div>
+
+  <div class="grid">
+    <div class="field">
+      <label>Date</label>
+      <input id="bagDate" type="date">
+    </div>
+    <div class="field">
+      <label>Bag / Container #</label>
+      <input id="bagNumber">
+    </div>
+    <div class="field">
+      <label>Quantity (g)</label>
+      <input id="bagQty" type="number" step="0.01" value="0">
+    </div>
+    <div class="field">
+      <label>Opened By</label>
+      <input id="bagOpenedBy">
+    </div>
+  </div>
+
+  <button class="btn" onclick="addBagRow()">Add Bag / Container</button>
+
+  <table id="bagTable">
+    <tr>
+      <th>Date</th>
+      <th>Bag / Container</th>
+      <th>Quantity (g)</th>
+      <th>Opened By</th>
+    </tr>
+  </table>
+
+  <h2>4. Daily Inventory</h2>
+  <div class="note">
+    Packaging calculation:
+    <br><br>
+    <b>(A1) Total Input Amount (g)</b><br>
+    <b>(B1) Packaged Units (#)</b><br>
+    <b>(B3) Equivalent Weight (g) = B1 × unit size (B2)</b><br>
+    <b>(C1) Remaining Input (g)</b><br>
+    <b>(D1) Waste (g)</b><br>
+    <b>(D2) Other Material Leftover (g) (Shake, Stem, etc.)</b><br>
+    <b>(E1) Actual Used = A1 - C1 - D1 - D2</b><br>
+    <b>(E2) Processing Loss (g) = E1 - B3</b><br>
+    <b>(E3) Processing Loss % = (E2 ÷ E1) × 100</b>
+  </div>
+
+  <div class="grid">
+    <div class="field">
+      <label>Date / Entry #</label>
+      <input id="invDate">
+    </div>
+    <div class="field">
+      <label>(B1) Packaged Units #</label>
+      <input id="packagedUnits" type="number" value="0">
+    </div>
+    <div class="field">
+      <label>(C1) Remaining Input (g)</label>
+      <input id="remainingInput" type="number" step="0.01" value="0">
+    </div>
+    <div class="field">
+      <label>(D1) Waste (g)</label>
+      <input id="wasteInput" type="number" step="0.01" value="0">
+    </div>
+
+    <div class="field">
+      <label>(D2) Other Material Leftover (g)</label>
+      <input id="otherLeftover" type="number" step="0.01" value="0">
+    </div>
+    <div class="field">
+      <label>Notes</label>
+      <input id="invNotes">
+    </div>
+  </div>
+
+  <button class="btn" onclick="addInventoryRow()">Add Daily Inventory Entry</button>
+
+  <table id="inventoryTable">
+    <tr>
+      <th>Date / Entry</th>
+      <th>(A1) Total Input Amount (g)</th>
+      <th>(B1) Packaged Units #</th>
+      <th>(B3) Equivalent Weight (g)</th>
+      <th>(C1) Remaining Input (g)</th>
+      <th>(D1) Waste (g)</th>
+      <th>(D2) Other Material Leftover (g)</th>
+      <th>(E1) Actual Used (g)</th>
+      <th>(E2) Processing Loss (g)</th>
+      <th>(E3) Processing Loss %</th>
+      <th>Notes</th>
+    </tr>
+  </table>
+
+  <div class="summary">
+    <div class="grid-3">
+      <div><b>Total Input (all bags):</b> <span id="sumInput">0.00</span> g</div>
+      <div><b>Total Equivalent Weight:</b> <span id="sumEquivalent">0.00</span> g</div>
+      <div><b>Total Actual Used:</b> <span id="sumActualUsed">0.00</span> g</div>
+      <div><b>Total Processing Loss:</b> <span id="sumProcessingLoss">0.00</span> g</div>
+      <div><b>Total Processing Loss %:</b> <span id="sumProcessingLossPct">0.00</span>%</div>
+      <div><b>Total Packaged Units:</b> <span id="sumPackagedUnits">0</span></div>
+    </div>
+  </div>
+
+  <h2>5. Packaging Material</h2>
+  <div class="grid">
+    <div class="field">
+      <label>Packaging Material</label>
+      <select id="matType">
+        <option>Container (Bag / Pouch)</option>
+        <option>Closure</option>
+        <option>Boveda Pack</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Lot Number</label>
+      <input id="matLot">
+    </div>
+    <div class="field">
+      <label>Total Amount Used</label>
+      <input id="matUsed" type="number" value="0">
+    </div>
+    <div class="field">
+      <label>Total Amount Disposed</label>
+      <input id="matDisposed" type="number" value="0">
+    </div>
+  </div>
+
+  <button class="btn" onclick="addMaterialRow()">Add Packaging Material</button>
+
+  <table id="materialTable">
+    <tr>
+      <th>Packaging Material</th>
+      <th>Lot Number</th>
+      <th>Total Amount Used</th>
+      <th>Total Amount Disposed</th>
+    </tr>
+  </table>
+
+  <h2>6. Weight Verification and Seal Integrity Check</h2>
+  <div class="note">
+    Tolerance Limit: <b>5%</b><br>
+    Check that the weights of <b>10 units per filling</b> are within acceptable range.<br>
+    Then check <b>5 units per 30 minutes</b> or <b>5 units per 100 units</b> if applicable.<br><br>
+    When capping / sealing, visually check the presence of corresponding amount of cannabis material in container / pouch.<br>
+    Ensure capping is properly aligned and tightly placed and secured, or heat sealing is properly sealed and there is no air leakage.
+  </div>
+
+  <div class="grid">
+    <div class="field">
+      <label>Target Size 1 (g)</label>
+      <input id="targetSize1" type="number" step="0.01" value="28">
+    </div>
+    <div class="field">
+      <label>Target Size 2 (g)</label>
+      <input id="targetSize2" type="number" step="0.01" value="14">
+    </div>
+    <div class="field">
+      <label>Date & Time</label>
+      <input id="wvDateTime" type="datetime-local">
+    </div>
+    <div class="field">
+      <label>Capped or Sealed</label>
+      <select id="wvSealed">
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="field"><label>1</label><input id="wv1" type="number" step="0.01"></div>
+    <div class="field"><label>2</label><input id="wv2" type="number" step="0.01"></div>
+    <div class="field"><label>3</label><input id="wv3" type="number" step="0.01"></div>
+    <div class="field"><label>4</label><input id="wv4" type="number" step="0.01"></div>
+    <div class="field"><label>5</label><input id="wv5" type="number" step="0.01"></div>
+    <div class="field"><label>6</label><input id="wv6" type="number" step="0.01"></div>
+    <div class="field"><label>7</label><input id="wv7" type="number" step="0.01"></div>
+    <div class="field"><label>8</label><input id="wv8" type="number" step="0.01"></div>
+    <div class="field"><label>9</label><input id="wv9" type="number" step="0.01"></div>
+    <div class="field"><label>10</label><input id="wv10" type="number" step="0.01"></div>
+  </div>
+
+  <div class="grid-3">
+    <div class="field">
+      <label>Seal Integrity</label>
+      <select id="sealIntegrity">
+        <option>Acceptable</option>
+        <option>Not Acceptable</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Weight Check Against</label>
+      <select id="weightTarget">
+        <option value="1">Target Size 1</option>
+        <option value="2">Target Size 2</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Checked By</label>
+      <input id="wvCheckedBy">
+    </div>
+  </div>
+
+  <button class="btn" onclick="addWeightCheck()">Add Weight Verification</button>
+
+  <table id="weightTable">
+    <tr>
+      <th>Date & Time</th>
+      <th>Target (g)</th>
+      <th>Acceptance Range</th>
+      <th>Sample Size</th>
+      <th>Min</th>
+      <th>Max</th>
+      <th>Average</th>
+      <th>Result</th>
+      <th>Capped / Sealed</th>
+      <th>Seal Integrity</th>
+      <th>Checked By</th>
+    </tr>
+  </table>
+
+  <h2>7. Post Operation Check and Sanitation</h2>
+  <table>
+    <tr>
+      <th>Check</th>
+      <th>Completed</th>
+      <th>Date</th>
+      <th>Initials / Notes</th>
+    </tr>
+    <tr>
+      <td>Clean packaging station with ISO 70%</td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>Clean tools and scales with ISO 70%</td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>Return packaging material to the designated area</td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>Turn on the ozonate before leaving room used for this packaging</td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>Leftover reusable cannabis is recorded and returned to secured storage room</td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>Waste material is collected, weighed, and recorded in corresponding form</td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+    <tr>
+      <td>Packaged products are placed in box or container and identified with product information and quantity</td>
+      <td><input type="checkbox"></td>
+      <td><input type="date"></td>
+      <td><input></td>
+    </tr>
+  </table>
+
+  <h2>8. Completion and Review</h2>
+  <div class="grid">
+    <div class="field">
+      <label>Performed and Recorded By</label>
+      <input>
+    </div>
+    <div class="field">
+      <label>Signature</label>
+      <input>
+    </div>
+    <div class="field">
+      <label>Date</label>
+      <input type="date">
+    </div>
+    <div class="field">
+      <label>Production Review</label>
+      <input>
+    </div>
+
+    <div class="field">
+      <label>Production Signature</label>
+      <input>
+    </div>
+    <div class="field">
+      <label>Production Review Date</label>
+      <input type="date">
+    </div>
+    <div class="field">
+      <label>Quality Assurance Review</label>
+      <input>
+    </div>
+    <div class="field">
+      <label>Signature</label>
+      <input>
+    </div>
+
+    <div class="field">
+      <label>Date</label>
+      <input type="date">
+    </div>
+    <div class="field">
+      <label>Final Disposition</label>
+      <select>
+        <option>Released</option>
+        <option>Rejected</option>
+        <option>Hold</option>
+      </select>
+    </div>
+    <div class="field" style="grid-column: span 2;">
+      <label>Comments</label>
+      <textarea></textarea>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const bagRows = [];
+  const inventoryRows = [];
+
+  function n(v){
+    const x = parseFloat(v);
+    return isNaN(x) ? 0 : x;
+  }
+
+  function addBagRow(){
+    const date = document.getElementById('bagDate').value;
+    const bagNumber = document.getElementById('bagNumber').value;
+    const qty = n(document.getElementById('bagQty').value);
+    const openedBy = document.getElementById('bagOpenedBy').value;
+
+    bagRows.push({date, bagNumber, qty, openedBy});
+
+    const table = document.getElementById('bagTable');
+    const row = table.insertRow(-1);
+    row.insertCell(0).innerText = date;
+    row.insertCell(1).innerText = bagNumber;
+    row.insertCell(2).innerText = qty.toFixed(2);
+    row.insertCell(3).innerText = openedBy;
+
+    document.getElementById('bagDate').value = '';
+    document.getElementById('bagNumber').value = '';
+    document.getElementById('bagQty').value = '0';
+    document.getElementById('bagOpenedBy').value = '';
+
+    recalcInventory();
+  }
+
+  function currentTotalInput(){
+    return bagRows.reduce((sum, row) => sum + n(row.qty), 0);
+  }
+
+  function addInventoryRow(){
+    const dateEntry = document.getElementById('invDate').value;
+    const A1 = currentTotalInput();
+    const B1 = n(document.getElementById('packagedUnits').value);
+    const B2 = n(document.getElementById('unitSize').value);
+    const B3 = B1 * B2;
+    const C1 = n(document.getElementById('remainingInput').value);
+    const D1 = n(document.getElementById('wasteInput').value);
+    const D2 = n(document.getElementById('otherLeftover').value);
+    const E1 = A1 - C1 - D1 - D2;
+    const E2 = E1 - B3;
+    const E3 = E1 > 0 ? (E2 / E1) * 100 : 0;
+    const notes = document.getElementById('invNotes').value;
+
+    inventoryRows.push({dateEntry, A1, B1, B3, C1, D1, D2, E1, E2, E3, notes});
+
+    const table = document.getElementById('inventoryTable');
+    const row = table.insertRow(-1);
+    row.insertCell(0).innerText = dateEntry;
+    row.insertCell(1).innerText = A1.toFixed(2);
+    row.insertCell(2).innerText = B1;
+    row.insertCell(3).innerText = B3.toFixed(2);
+    row.insertCell(4).innerText = C1.toFixed(2);
+    row.insertCell(5).innerText = D1.toFixed(2);
+    row.insertCell(6).innerText = D2.toFixed(2);
+    row.insertCell(7).innerText = E1.toFixed(2);
+    row.insertCell(8).innerText = E2.toFixed(2);
+    row.insertCell(9).innerText = E3.toFixed(2) + '%';
+    row.insertCell(10).innerText = notes;
+
+    document.getElementById('invDate').value = '';
+    document.getElementById('packagedUnits').value = '0';
+    document.getElementById('remainingInput').value = '0';
+    document.getElementById('wasteInput').value = '0';
+    document.getElementById('otherLeftover').value = '0';
+    document.getElementById('invNotes').value = '';
+
+    recalcInventory();
+  }
+
+  function recalcInventory(){
+    const totalInput = currentTotalInput();
+    const totalEquivalent = inventoryRows.reduce((sum, row) => sum + n(row.B3), 0);
+    const totalActualUsed = inventoryRows.reduce((sum, row) => sum + n(row.E1), 0);
+    const totalProcessingLoss = inventoryRows.reduce((sum, row) => sum + n(row.E2), 0);
+    const totalPackagedUnits = inventoryRows.reduce((sum, row) => sum + n(row.B1), 0);
+    const totalProcessingLossPct = totalActualUsed > 0 ? (totalProcessingLoss / totalActualUsed) * 100 : 0;
+
+    document.getElementById('sumInput').innerText = totalInput.toFixed(2);
+    document.getElementById('sumEquivalent').innerText = totalEquivalent.toFixed(2);
+    document.getElementById('sumActualUsed').innerText = totalActualUsed.toFixed(2);
+    document.getElementById('sumProcessingLoss').innerText = totalProcessingLoss.toFixed(2);
+    document.getElementById('sumProcessingLossPct').innerText = totalProcessingLossPct.toFixed(2);
+    document.getElementById('sumPackagedUnits').innerText = totalPackagedUnits;
+  }
+
+  function addMaterialRow(){
+    const type = document.getElementById('matType').value;
+    const lot = document.getElementById('matLot').value;
+    const used = n(document.getElementById('matUsed').value);
+    const disposed = n(document.getElementById('matDisposed').value);
+
+    const table = document.getElementById('materialTable');
+    const row = table.insertRow(-1);
+    row.insertCell(0).innerText = type;
+    row.insertCell(1).innerText = lot;
+    row.insertCell(2).innerText = used;
+    row.insertCell(3).innerText = disposed;
+
+    document.getElementById('matLot').value = '';
+    document.getElementById('matUsed').value = '0';
+    document.getElementById('matDisposed').value = '0';
+  }
+
+  function addWeightCheck(){
+    const dt = document.getElementById('wvDateTime').value;
+    const sealed = document.getElementById('wvSealed').value;
+    const sealIntegrity = document.getElementById('sealIntegrity').value;
+    const checkedBy = document.getElementById('wvCheckedBy').value;
+    const targetChoice = document.getElementById('weightTarget').value;
+    const target = targetChoice === '1'
+      ? n(document.getElementById('targetSize1').value)
+      : n(document.getElementById('targetSize2').value);
+
+    const low = target * 0.95;
+    const high = target * 1.05;
+
+    const weights = [
+      n(document.getElementById('wv1').value),
+      n(document.getElementById('wv2').value),
+      n(document.getElementById('wv3').value),
+      n(document.getElementById('wv4').value),
+      n(document.getElementById('wv5').value),
+      n(document.getElementById('wv6').value),
+      n(document.getElementById('wv7').value),
+      n(document.getElementById('wv8').value),
+      n(document.getElementById('wv9').value),
+      n(document.getElementById('wv10').value)
+    ].filter(v => v > 0);
+
+    const sampleSize = weights.length;
+    const min = sampleSize ? Math.min(...weights) : 0;
+    const max = sampleSize ? Math.max(...weights) : 0;
+    const avg = sampleSize ? weights.reduce((a,b)=>a+b,0)/sampleSize : 0;
+    const pass = sampleSize ? weights.every(v => v >= low && v <= high) : false;
+
+    const table = document.getElementById('weightTable');
+    const row = table.insertRow(-1);
+    row.insertCell(0).innerText = dt;
+    row.insertCell(1).innerText = target.toFixed(2);
+    row.insertCell(2).innerText = low.toFixed(2) + ' - ' + high.toFixed(2);
+    row.insertCell(3).innerText = sampleSize;
+    row.insertCell(4).innerText = sampleSize ? min.toFixed(2) : '';
+    row.insertCell(5).innerText = sampleSize ? max.toFixed(2) : '';
+    row.insertCell(6).innerText = sampleSize ? avg.toFixed(2) : '';
+    row.insertCell(7).innerText = pass ? 'Acceptable' : 'Out of Range';
+    row.insertCell(8).innerText = sealed;
+    row.insertCell(9).innerText = sealIntegrity;
+    row.insertCell(10).innerText = checkedBy;
+
+    [
+      'wvDateTime','wv1','wv2','wv3','wv4','wv5',
+      'wv6','wv7','wv8','wv9','wv10','wvCheckedBy'
+    ].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('wvSealed').value = 'Yes';
+    document.getElementById('sealIntegrity').value = 'Acceptable';
+    document.getElementById('weightTarget').value = '1';
+  }
+
+  recalcInventory();
+</script>
+</body>
+</html>
