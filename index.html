@@ -20,12 +20,35 @@
     box-shadow:0 4px 18px rgba(0,0,0,.08);
     padding:28px;
   }
+  .header-box{
+    border:2px solid #cfd4dc;
+    padding:16px;
+    border-radius:8px;
+    margin-bottom:20px;
+  }
+  .logo-wrap{
+    text-align:center;
+    margin-bottom:12px;
+  }
+  .logo-wrap img{
+    max-height:110px;
+    max-width:420px;
+    width:auto;
+    object-fit:contain;
+  }
+  .header-grid{
+    display:grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap:16px;
+    align-items:end;
+  }
   h1,h2,h3{
     margin:0 0 12px 0;
   }
   h1{
     text-align:center;
-    margin-bottom:24px;
+    margin-bottom:8px;
+    font-size:28px;
   }
   h2{
     margin-top:30px;
@@ -70,6 +93,11 @@
     width:100%;
     box-sizing:border-box;
   }
+  input[readonly]{
+    background:#f3f4f6;
+    color:#111;
+    font-weight:700;
+  }
   textarea{
     min-height:80px;
     resize:vertical;
@@ -89,6 +117,12 @@
   th{
     background:#eef2f7;
   }
+  .btn-row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:18px;
+  }
   .btn{
     background:#1f6f43;
     color:#fff;
@@ -97,10 +131,15 @@
     border-radius:6px;
     cursor:pointer;
     font-weight:700;
-    margin-top:10px;
   }
   .btn:hover{
     background:#185634;
+  }
+  .btn.secondary{
+    background:#374151;
+  }
+  .btn.secondary:hover{
+    background:#1f2937;
   }
   .summary{
     background:#f9fafb;
@@ -116,21 +155,40 @@
     margin:10px 0 14px 0;
     font-size:14px;
   }
-  .small{
-    font-size:12px;
-    color:#555;
-  }
-  .center{
-    text-align:center;
-  }
   @media (max-width: 1100px){
-    .grid, .grid-3, .grid-2{
+    .grid, .grid-3, .grid-2, .header-grid{
       grid-template-columns:1fr 1fr;
     }
   }
   @media (max-width: 700px){
-    .grid, .grid-3, .grid-2{
+    .grid, .grid-3, .grid-2, .header-grid{
       grid-template-columns:1fr;
+    }
+  }
+  @media print{
+    body{
+      background:#fff;
+      padding:0;
+    }
+    .container{
+      box-shadow:none;
+      border-radius:0;
+      max-width:none;
+      padding:12px;
+    }
+    .btn-row{
+      display:none !important;
+    }
+    input, select, textarea{
+      border:1px solid #999;
+      background:#fff;
+    }
+    input[readonly]{
+      background:#fff;
+    }
+    .note{
+      background:#fff;
+      border-left:2px solid #999;
     }
   }
 </style>
@@ -138,65 +196,71 @@
 <body>
 <div class="container">
 
-  <h1>FMAT-005 Dried Flower Packaging Record</h1>
-  <div class="muted">
-    Packaging flow: pre-operational check → input bags / containers → daily inventory and packaging calculation → packaging material → weight verification and seal integrity → post operation → completion and review
+  <div class="header-box">
+    <div class="logo-wrap">
+      <img src="sugar-cane-cannabis-logo-orange.jpg" alt="Sugar Cane Cannabis Logo">
+    </div>
+
+    <div class="header-grid">
+      <div>
+        <h1>FMAT-005 Dried Flower Packaging Record</h1>
+        <div class="muted">
+          Packaging flow: preoperational check → weight verification → input bags / containers → daily inventory → packaging material → post operation → completion and review
+        </div>
+      </div>
+      <div class="field">
+        <label>Document #</label>
+        <input value="FMAT005" id="docNumber" readonly>
+      </div>
+      <div class="field">
+        <label>Version</label>
+        <input value="1" id="docVersion" readonly>
+      </div>
+      <div></div>
+      <div class="field">
+        <label>Date Effective</label>
+        <input type="text" value="March 15 2026" id="dateEffective" readonly>
+      </div>
+    </div>
   </div>
 
   <h2>1. Product Information</h2>
   <div class="grid">
     <div class="field">
-      <label>Document #</label>
-      <input value="FMAT005">
-    </div>
-    <div class="field">
-      <label>Date Effective</label>
-      <input type="date" value="2026-03-15">
-    </div>
-    <div class="field">
-      <label>Version</label>
-      <input value="1">
-    </div>
-    <div class="field">
       <label>Activity Start Date (YYYY-MM-DD)</label>
-      <input type="date">
+      <input type="date" id="activityStartDate">
     </div>
-
     <div class="field">
       <label>Labelled Packaged Date</label>
-      <input type="date">
+      <input type="date" id="labelledPackagedDate">
     </div>
     <div class="field">
       <label>Activity End Date</label>
-      <input type="date">
+      <input type="date" id="activityEndDate">
     </div>
     <div class="field">
       <label>Cultivar (Strain)</label>
-      <input>
-    </div>
-    <div class="field">
-      <label>Final Product Lot #</label>
-      <input>
+      <input id="productName">
     </div>
 
     <div class="field">
-      <label>Cannabis Net Weight per Unit (B2) grams per unit</label>
-      <input type="number" id="unitSize" step="0.01" value="3.5" oninput="recalcInventory()">
+      <label>Final Product Lot #</label>
+      <input id="finalLot">
     </div>
     <div class="field">
       <label>Original (Source) Lot</label>
-      <input>
+      <input id="sourceLot">
     </div>
     <div class="field">
       <label>Same as Finished Product Lot</label>
-      <select>
+      <select id="sameAsFinishedLot">
         <option>No</option>
         <option>Yes</option>
       </select>
     </div>
     <div class="field">
-      <label>Performed By</label>
-      <input>
+      <label>Cannabis Net Weight per Unit (B2) grams per unit</label>
+      <input type="number" id="unitSize" step="0.01" value="3.5" oninput="recalcSummaryOnly()">
     </div>
   </div>
 
@@ -211,49 +275,42 @@
       <th>Check</th>
       <th>Pass</th>
       <th>Fail</th>
-      <th>Date</th>
       <th>Initials / Comments</th>
     </tr>
     <tr>
       <td>Employees follow gowning and hygienic practices</td>
       <td><input type="checkbox"></td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
       <td>No broken glass and/or plastics and/or wood</td>
       <td><input type="checkbox"></td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
       <td>No cannabis debris from previous activities (different batches)</td>
       <td><input type="checkbox"></td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
       <td>All working surfaces and scales are sanitized with ISO 70% and wiped dry</td>
       <td><input type="checkbox"></td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
       <td>No sign of damage / deformity. If any, report before processing</td>
       <td><input type="checkbox"></td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
-      <td>Correct packaging materials, labels, and components available for this lot</td>
+      <td>Correct packaging materials available for this lot</td>
       <td><input type="checkbox"></td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
   </table>
@@ -268,37 +325,27 @@
       <th>Weight Standard</th>
       <th>Scale Reading</th>
       <th>Within 5% Tolerance</th>
-      <th>Date</th>
       <th>Initials</th>
     </tr>
     <tr>
       <td><input></td>
       <td><input type="number" step="0.01"></td>
       <td><input type="number" step="0.01"></td>
-      <td>
-        <select><option>Yes</option><option>No</option></select>
-      </td>
-      <td><input type="date"></td>
+      <td><select><option>Yes</option><option>No</option></select></td>
       <td><input></td>
     </tr>
     <tr>
       <td><input></td>
       <td><input type="number" step="0.01"></td>
       <td><input type="number" step="0.01"></td>
-      <td>
-        <select><option>Yes</option><option>No</option></select>
-      </td>
-      <td><input type="date"></td>
+      <td><select><option>Yes</option><option>No</option></select></td>
       <td><input></td>
     </tr>
     <tr>
       <td><input></td>
       <td><input type="number" step="0.01"></td>
       <td><input type="number" step="0.01"></td>
-      <td>
-        <select><option>Yes</option><option>No</option></select>
-      </td>
-      <td><input type="date"></td>
+      <td><select><option>Yes</option><option>No</option></select></td>
       <td><input></td>
     </tr>
   </table>
@@ -309,7 +356,6 @@
       <th>Swab</th>
       <th>Reading RLU</th>
       <th>Status</th>
-      <th>Date</th>
       <th>Initials</th>
     </tr>
     <tr>
@@ -323,7 +369,6 @@
           <option>NA</option>
         </select>
       </td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
@@ -337,7 +382,6 @@
           <option>NA</option>
         </select>
       </td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
   </table>
@@ -354,7 +398,90 @@
     </div>
   </div>
 
-  <h2>3. Daily Input Bag / Container Number and Quantity (g)</h2>
+  <h2>3. Weight Verification and Seal Integrity Check</h2>
+  <div class="note">
+    Tolerance Limit: <b>5%</b><br>
+    Check that the weights of <b>10 units per filling</b> are within acceptable range. Then check <b>5 units per 30 minutes</b> or <b>5 units per 100 units</b> if applicable.<br><br>
+    When capping / sealing, visually check the presence of corresponding amount of cannabis material in container / pouch.<br>
+    Ensure capping is properly aligned and tightly placed and secured, or heat sealing is properly sealed and there is no air leakage.
+  </div>
+
+  <div class="grid">
+    <div class="field">
+      <label>Target Size 1 (g)</label>
+      <input id="targetSize1" type="number" step="0.01" value="28">
+    </div>
+    <div class="field">
+      <label>Target Size 2 (g)</label>
+      <input id="targetSize2" type="number" step="0.01" value="14">
+    </div>
+    <div class="field">
+      <label>Date & Time</label>
+      <input id="wvDateTime" type="datetime-local">
+    </div>
+    <div class="field">
+      <label>Capped or Sealed</label>
+      <select id="wvSealed">
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="field"><label>Weight 1</label><input id="wv1" type="number" step="0.01"></div>
+    <div class="field"><label>Weight 2</label><input id="wv2" type="number" step="0.01"></div>
+    <div class="field"><label>Weight 3</label><input id="wv3" type="number" step="0.01"></div>
+    <div class="field"><label>Weight 4</label><input id="wv4" type="number" step="0.01"></div>
+    <div class="field"><label>Weight 5</label><input id="wv5" type="number" step="0.01"></div>
+    <div class="field"><label>Weight 6</label><input id="wv6" type="number" step="0.01"></div>
+    <div class="field"><label>Weight 7</label><input id="wv7" type="number" step="0.01"></div>
+    <div class="field"><label>Weight 8</label><input id="wv8" type="number" step="0.01"></div>
+    <div class="field"><label>Weight 9</label><input id="wv9" type="number" step="0.01"></div>
+    <div class="field"><label>Weight 10</label><input id="wv10" type="number" step="0.01"></div>
+  </div>
+
+  <div class="grid-3">
+    <div class="field">
+      <label>Weight Check Against</label>
+      <select id="weightTarget">
+        <option value="1">Target Size 1</option>
+        <option value="2">Target Size 2</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Seal Integrity</label>
+      <select id="sealIntegrity">
+        <option>Acceptable</option>
+        <option>Not Acceptable</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Checked By</label>
+      <input id="wvCheckedBy">
+    </div>
+  </div>
+
+  <button class="btn" onclick="addWeightCheck()">Add Weight Verification</button>
+
+  <table id="weightTable">
+    <tr>
+      <th>Date & Time</th>
+      <th>Target (g)</th>
+      <th>Acceptance Range</th>
+      <th>Weights Entered</th>
+      <th>Sample Size</th>
+      <th>Min</th>
+      <th>Max</th>
+      <th>Average</th>
+      <th>Result</th>
+      <th>Capped / Sealed</th>
+      <th>Seal Integrity</th>
+      <th>Checked By</th>
+    </tr>
+  </table>
+
+  <h2>4. Daily Input Bag / Container Number and Quantity (g)</h2>
   <div class="note">
     Record each bag / container used during packaging.
   </div>
@@ -389,10 +516,8 @@
     </tr>
   </table>
 
-  <h2>4. Daily Inventory</h2>
+  <h2>5. Daily Inventory</h2>
   <div class="note">
-    Packaging calculation:
-    <br><br>
     <b>(A1) Total Input Amount (g)</b><br>
     <b>(B1) Packaged Units (#)</b><br>
     <b>(B3) Equivalent Weight (g) = B1 × unit size (B2)</b><br>
@@ -452,22 +577,23 @@
 
   <div class="summary">
     <div class="grid-3">
-      <div><b>Total Input (all bags):</b> <span id="sumInput">0.00</span> g</div>
+      <div><b>Current Available Input:</b> <span id="currentAvailableInput">0.00</span> g</div>
       <div><b>Total Equivalent Weight:</b> <span id="sumEquivalent">0.00</span> g</div>
       <div><b>Total Actual Used:</b> <span id="sumActualUsed">0.00</span> g</div>
+      <div><b>Total Waste:</b> <span id="sumWaste">0.00</span> g</div>
       <div><b>Total Processing Loss:</b> <span id="sumProcessingLoss">0.00</span> g</div>
       <div><b>Total Processing Loss %:</b> <span id="sumProcessingLossPct">0.00</span>%</div>
-      <div><b>Total Packaged Units:</b> <span id="sumPackagedUnits">0</span></div>
+      <div><b>Total Qty Packaged:</b> <span id="sumPackagedUnits">0</span></div>
     </div>
   </div>
 
-  <h2>5. Packaging Material</h2>
+  <h2>6. Packaging Material</h2>
   <div class="grid">
     <div class="field">
       <label>Packaging Material</label>
       <select id="matType">
         <option>Container (Bag / Pouch)</option>
-        <option>Closure</option>
+        <option>Closure (if applicable)</option>
         <option>Boveda Pack</option>
         <option>Other</option>
       </select>
@@ -497,137 +623,46 @@
     </tr>
   </table>
 
-  <h2>6. Weight Verification and Seal Integrity Check</h2>
-  <div class="note">
-    Tolerance Limit: <b>5%</b><br>
-    Check that the weights of <b>10 units per filling</b> are within acceptable range.<br>
-    Then check <b>5 units per 30 minutes</b> or <b>5 units per 100 units</b> if applicable.<br><br>
-    When capping / sealing, visually check the presence of corresponding amount of cannabis material in container / pouch.<br>
-    Ensure capping is properly aligned and tightly placed and secured, or heat sealing is properly sealed and there is no air leakage.
-  </div>
-
-  <div class="grid">
-    <div class="field">
-      <label>Target Size 1 (g)</label>
-      <input id="targetSize1" type="number" step="0.01" value="28">
-    </div>
-    <div class="field">
-      <label>Target Size 2 (g)</label>
-      <input id="targetSize2" type="number" step="0.01" value="14">
-    </div>
-    <div class="field">
-      <label>Date & Time</label>
-      <input id="wvDateTime" type="datetime-local">
-    </div>
-    <div class="field">
-      <label>Capped or Sealed</label>
-      <select id="wvSealed">
-        <option>Yes</option>
-        <option>No</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="grid">
-    <div class="field"><label>1</label><input id="wv1" type="number" step="0.01"></div>
-    <div class="field"><label>2</label><input id="wv2" type="number" step="0.01"></div>
-    <div class="field"><label>3</label><input id="wv3" type="number" step="0.01"></div>
-    <div class="field"><label>4</label><input id="wv4" type="number" step="0.01"></div>
-    <div class="field"><label>5</label><input id="wv5" type="number" step="0.01"></div>
-    <div class="field"><label>6</label><input id="wv6" type="number" step="0.01"></div>
-    <div class="field"><label>7</label><input id="wv7" type="number" step="0.01"></div>
-    <div class="field"><label>8</label><input id="wv8" type="number" step="0.01"></div>
-    <div class="field"><label>9</label><input id="wv9" type="number" step="0.01"></div>
-    <div class="field"><label>10</label><input id="wv10" type="number" step="0.01"></div>
-  </div>
-
-  <div class="grid-3">
-    <div class="field">
-      <label>Seal Integrity</label>
-      <select id="sealIntegrity">
-        <option>Acceptable</option>
-        <option>Not Acceptable</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Weight Check Against</label>
-      <select id="weightTarget">
-        <option value="1">Target Size 1</option>
-        <option value="2">Target Size 2</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Checked By</label>
-      <input id="wvCheckedBy">
-    </div>
-  </div>
-
-  <button class="btn" onclick="addWeightCheck()">Add Weight Verification</button>
-
-  <table id="weightTable">
-    <tr>
-      <th>Date & Time</th>
-      <th>Target (g)</th>
-      <th>Acceptance Range</th>
-      <th>Sample Size</th>
-      <th>Min</th>
-      <th>Max</th>
-      <th>Average</th>
-      <th>Result</th>
-      <th>Capped / Sealed</th>
-      <th>Seal Integrity</th>
-      <th>Checked By</th>
-    </tr>
-  </table>
-
   <h2>7. Post Operation Check and Sanitation</h2>
   <table>
     <tr>
       <th>Check</th>
       <th>Completed</th>
-      <th>Date</th>
       <th>Initials / Notes</th>
     </tr>
     <tr>
       <td>Clean packaging station with ISO 70%</td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
       <td>Clean tools and scales with ISO 70%</td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
       <td>Return packaging material to the designated area</td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
       <td>Turn on the ozonate before leaving room used for this packaging</td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
       <td>Leftover reusable cannabis is recorded and returned to secured storage room</td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
       <td>Waste material is collected, weighed, and recorded in corresponding form</td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
     <tr>
       <td>Packaged products are placed in box or container and identified with product information and quantity</td>
       <td><input type="checkbox"></td>
-      <td><input type="date"></td>
       <td><input></td>
     </tr>
   </table>
@@ -636,7 +671,7 @@
   <div class="grid">
     <div class="field">
       <label>Performed and Recorded By</label>
-      <input>
+      <input id="performedBy">
     </div>
     <div class="field">
       <label>Signature</label>
@@ -672,18 +707,14 @@
       <label>Date</label>
       <input type="date">
     </div>
-    <div class="field">
-      <label>Final Disposition</label>
-      <select>
-        <option>Released</option>
-        <option>Rejected</option>
-        <option>Hold</option>
-      </select>
-    </div>
     <div class="field" style="grid-column: span 2;">
       <label>Comments</label>
       <textarea></textarea>
     </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn secondary" onclick="window.print()">Print / Save as PDF</button>
   </div>
 
 </div>
@@ -691,6 +722,8 @@
 <script>
   const bagRows = [];
   const inventoryRows = [];
+  let inventoryBaseRemaining = 0;
+  let lastBagIndexUsedForInventory = 0;
 
   function n(v){
     const x = parseFloat(v);
@@ -703,8 +736,6 @@
     const qty = n(document.getElementById('bagQty').value);
     const openedBy = document.getElementById('bagOpenedBy').value;
 
-    bagRows.push({date, bagNumber, qty, openedBy});
-
     const table = document.getElementById('bagTable');
     const row = table.insertRow(-1);
     row.insertCell(0).innerText = date;
@@ -712,21 +743,31 @@
     row.insertCell(2).innerText = qty.toFixed(2);
     row.insertCell(3).innerText = openedBy;
 
+    bagRows.push({date, bagNumber, qty, openedBy});
+
     document.getElementById('bagDate').value = '';
     document.getElementById('bagNumber').value = '';
     document.getElementById('bagQty').value = '0';
     document.getElementById('bagOpenedBy').value = '';
 
-    recalcInventory();
+    recalcSummaryOnly();
   }
 
-  function currentTotalInput(){
-    return bagRows.reduce((sum, row) => sum + n(row.qty), 0);
+  function getNewBagQtySinceLastInventory(){
+    let total = 0;
+    for(let i = lastBagIndexUsedForInventory; i < bagRows.length; i++){
+      total += n(bagRows[i].qty);
+    }
+    return total;
+  }
+
+  function getCurrentAvailableInput(){
+    return inventoryBaseRemaining + getNewBagQtySinceLastInventory();
   }
 
   function addInventoryRow(){
     const dateEntry = document.getElementById('invDate').value;
-    const A1 = currentTotalInput();
+    const A1 = getCurrentAvailableInput();
     const B1 = n(document.getElementById('packagedUnits').value);
     const B2 = n(document.getElementById('unitSize').value);
     const B3 = B1 * B2;
@@ -754,6 +795,9 @@
     row.insertCell(9).innerText = E3.toFixed(2) + '%';
     row.insertCell(10).innerText = notes;
 
+    inventoryBaseRemaining = C1;
+    lastBagIndexUsedForInventory = bagRows.length;
+
     document.getElementById('invDate').value = '';
     document.getElementById('packagedUnits').value = '0';
     document.getElementById('remainingInput').value = '0';
@@ -761,20 +805,22 @@
     document.getElementById('otherLeftover').value = '0';
     document.getElementById('invNotes').value = '';
 
-    recalcInventory();
+    recalcSummaryOnly();
   }
 
-  function recalcInventory(){
-    const totalInput = currentTotalInput();
+  function recalcSummaryOnly(){
+    const currentAvailable = getCurrentAvailableInput();
     const totalEquivalent = inventoryRows.reduce((sum, row) => sum + n(row.B3), 0);
     const totalActualUsed = inventoryRows.reduce((sum, row) => sum + n(row.E1), 0);
+    const totalWaste = inventoryRows.reduce((sum, row) => sum + n(row.D1), 0);
     const totalProcessingLoss = inventoryRows.reduce((sum, row) => sum + n(row.E2), 0);
     const totalPackagedUnits = inventoryRows.reduce((sum, row) => sum + n(row.B1), 0);
     const totalProcessingLossPct = totalActualUsed > 0 ? (totalProcessingLoss / totalActualUsed) * 100 : 0;
 
-    document.getElementById('sumInput').innerText = totalInput.toFixed(2);
+    document.getElementById('currentAvailableInput').innerText = currentAvailable.toFixed(2);
     document.getElementById('sumEquivalent').innerText = totalEquivalent.toFixed(2);
     document.getElementById('sumActualUsed').innerText = totalActualUsed.toFixed(2);
+    document.getElementById('sumWaste').innerText = totalWaste.toFixed(2);
     document.getElementById('sumProcessingLoss').innerText = totalProcessingLoss.toFixed(2);
     document.getElementById('sumProcessingLossPct').innerText = totalProcessingLossPct.toFixed(2);
     document.getElementById('sumPackagedUnits').innerText = totalPackagedUnits;
@@ -829,20 +875,22 @@
     const max = sampleSize ? Math.max(...weights) : 0;
     const avg = sampleSize ? weights.reduce((a,b)=>a+b,0)/sampleSize : 0;
     const pass = sampleSize ? weights.every(v => v >= low && v <= high) : false;
+    const weightsDisplay = weights.map(w => w.toFixed(2)).join(', ');
 
     const table = document.getElementById('weightTable');
     const row = table.insertRow(-1);
     row.insertCell(0).innerText = dt;
     row.insertCell(1).innerText = target.toFixed(2);
     row.insertCell(2).innerText = low.toFixed(2) + ' - ' + high.toFixed(2);
-    row.insertCell(3).innerText = sampleSize;
-    row.insertCell(4).innerText = sampleSize ? min.toFixed(2) : '';
-    row.insertCell(5).innerText = sampleSize ? max.toFixed(2) : '';
-    row.insertCell(6).innerText = sampleSize ? avg.toFixed(2) : '';
-    row.insertCell(7).innerText = pass ? 'Acceptable' : 'Out of Range';
-    row.insertCell(8).innerText = sealed;
-    row.insertCell(9).innerText = sealIntegrity;
-    row.insertCell(10).innerText = checkedBy;
+    row.insertCell(3).innerText = weightsDisplay;
+    row.insertCell(4).innerText = sampleSize;
+    row.insertCell(5).innerText = sampleSize ? min.toFixed(2) : '';
+    row.insertCell(6).innerText = sampleSize ? max.toFixed(2) : '';
+    row.insertCell(7).innerText = sampleSize ? avg.toFixed(2) : '';
+    row.insertCell(8).innerText = pass ? 'Acceptable' : 'Out of Range';
+    row.insertCell(9).innerText = sealed;
+    row.insertCell(10).innerText = sealIntegrity;
+    row.insertCell(11).innerText = checkedBy;
 
     [
       'wvDateTime','wv1','wv2','wv3','wv4','wv5',
@@ -853,7 +901,7 @@
     document.getElementById('weightTarget').value = '1';
   }
 
-  recalcInventory();
+  recalcSummaryOnly();
 </script>
 </body>
 </html>
